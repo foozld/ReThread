@@ -46,18 +46,18 @@ def generate_explanation(material, material_data):
         genai.configure(api_key=api_key)
 
         model = genai.GenerativeModel(
-        model_name="gemini-1.5-flash",
-        system_instruction="""
-        You are an expert in sustainable fashion and textile environmental impact.
+            model_name="gemini-1.5-flash",
+            system_instruction="""
+You are an expert in sustainable fashion and textile environmental impact.
 
-        Your job is to explain clothing material sustainability using ONLY the data provided.
+Your job is to explain clothing material sustainability using ONLY the data provided.
 
-        Rules:
-        - Keep explanations concise (2–3 sentences).
-        - Do not invent new facts.
-        - Base the explanation strictly on the provided material data.
-        - Recommend sustainable alternatives when appropriate.
-        """
+Rules:
+- Keep explanations concise (2–3 sentences).
+- Do not invent new facts.
+- Base the explanation strictly on the provided material data.
+- Recommend sustainable alternatives when appropriate.
+"""
         )
 
         # Build a rich prompt with material data context

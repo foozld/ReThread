@@ -20,10 +20,6 @@ const errorContainer = document.getElementById('errorContainer');
 const resultsSection = document.getElementById('resultsSection');
 const analyzeAnotherBtn = document.getElementById('analyzeAnotherBtn');
 
-// Navbar toggle elements
-const menu = document.querySelector('#mobile-menu');
-const menuLinks = document.querySelector('.navbar__menu');
-
 // Result display elements
 const materialName = document.getElementById('materialName');
 const sustainabilityRating = document.getElementById('sustainabilityRating');
@@ -37,12 +33,6 @@ const aiExplanation = document.getElementById('aiExplanation');
 // ============================================================================
 // EVENT LISTENERS - Set up event handlers for user interactions
 // ============================================================================
-
-// Navbar toggle functionality
-menu.addEventListener('click', function() {
-    menu.classList.toggle('is-active');
-    menuLinks.classList.toggle('active');
-});
 
 /**
  * Handle form submission

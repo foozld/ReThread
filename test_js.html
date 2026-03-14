@@ -1,0 +1,41 @@
+<!-- 
+  ReThread Quick Test Page
+  Load this in browser to verify JavaScript works without starting the full server
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ReThread JS Test</title>
+</head>
+<body>
+    <h1>ReThread JavaScript Test</h1>
+    <p>Check browser console (F12) for errors</p>
+    
+    <!-- Simple form to test -->
+    <form id="materialForm">
+        <input type="text" id="materialInput" placeholder="Enter material">
+        <button type="submit">Test</button>
+    </form>
+    
+    <script>
+        console.log("✅ Script loaded");
+        
+        // Test DOM access
+        const materialForm = document.getElementById('materialForm');
+        const materialInput = document.getElementById('materialInput');
+        
+        if (materialForm && materialInput) {
+            console.log("✅ DOM elements found");
+        } else {
+            console.error("❌ DOM elements not found");
+        }
+        
+        // Test form submission
+        materialForm.addEventListener('submit', function(event) {
+            event.preventDefault();
+            console.log("✅ Form submission intercepted");
+            console.log("Input value:", materialInput.value);
+        });
+    </script>
+</body>
+</html>
