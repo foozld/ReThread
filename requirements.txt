@@ -8,8 +8,8 @@ Werkzeug==2.3.7
 # Environment variables management
 python-dotenv==1.0.0
 
-# Optional: For LLM API integration (uncomment when integrating OpenAI/similar)
-# requests==2.31.0
+# Google Gemini AI integration (required for AI explanations)
+google-generativeai==0.4.0
 
 # Optional: For better error handling
 # colorama==0.4.6
