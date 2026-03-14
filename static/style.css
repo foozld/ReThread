@@ -55,6 +55,71 @@
     box-sizing: border-box;
 }
 
+.navbar {
+    background-color: #45cd7d;
+    position: relative;
+}
+
+.navbar__container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 0 1rem;
+    font-size: 2rem;
+}
+
+.navbar__logo {
+    color: white;
+    font-weight: bold;
+    text-align: center;
+}
+
+.navbar__toggle {
+    display: block;
+    cursor: pointer;
+    position: absolute;
+    right: 1rem;
+}
+
+.bar {
+    display: block;
+    width: 25px;
+    height: 3px;
+    margin: 5px auto;
+    transition: all 0.3s ease;
+    background-color: white;
+}
+
+.navbar__menu {
+    display: none;
+    list-style: none;
+}
+
+.navbar__menu.active {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #45cd7d;
+    flex-direction: column;
+    padding: 0;
+    min-width: 200px;
+}
+
+.navbar__item {
+    margin: 0;
+    padding: 1rem;
+    text-align: center;
+}
+
+.navbar__links {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+
 /* Apply default typography to entire document */
 html, body {
     font-family: var(--font-primary);
@@ -136,11 +201,20 @@ a:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
+.description__header {
+    color: var(--primary-green);
+}
+
 .description {
     /* Description text styling */
     font-size: var(--font-size-base);
     color: var(--dark-text);
     line-height: 1.8;
+}
+
+/* Add spacing between paragraphs inside the info section */
+.info-section p + p {
+    margin-top: 1.5rem;
 }
 
 /* ============================================================================
@@ -149,6 +223,7 @@ a:hover {
 
 .analysis-section {
     /* Container for the analysis form */
+    margin-top: 2rem;
     margin-bottom: var(--spacing-xl);
 }
 
@@ -529,5 +604,36 @@ a:hover {
         page-break-inside: avoid;
         box-shadow: none;
         border: 1px solid #ccc;
+    }
+}
+
+/* Mobile menu styles */
+@media screen and (max-width: 768px) {
+    .navbar__menu.active {
+        display: flex;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background-color: #45cd7d;
+        padding: 0;
+    }
+
+    .navbar__item {
+        text-align: center;
+        margin: 2rem 0;
+    }
+
+    .navbar__toggle.is-active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .navbar__toggle.is-active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .navbar__toggle.is-active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
     }
 }
