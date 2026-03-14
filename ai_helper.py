@@ -172,13 +172,25 @@ def setup_api_integration():
 # For local testing and development
 if __name__ == '__main__':
     # Test the AI helper functions
-    test_materials = ['polyester', 'organic cotton', 'hemp', 'nylon']
+    # Load sample material data from materials.json
+    try:
+        with open('materials.json', 'r') as f:
+            all_materials = json.load(f)
+    except FileNotFoundError:
+        print("Error: materials.json not found!")
+        all_materials = {}
+    
+    test_materials = ['Polyester', 'Organic Cotton', 'Hemp', 'Nylon']
     
     print("ReThread AI Helper - Test Mode")
     print("=" * 50)
     
     for material in test_materials:
-        explanation = generate_explanation(material)
-        print(f"\n{material.upper()}:")
-        print(explanation)
-        print("-" * 50)
+        if material in all_materials:
+            material_data = all_materials[material]
+            explanation = generate_explanation(material, material_data)
+            print(f"\n{material.upper()}:")
+            print(explanation)
+            print("-" * 50)
+        else:
+            print(f"\n{material}: NOT FOUND in database")
