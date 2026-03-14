@@ -95,6 +95,170 @@ Rules:
         return get_fallback_explanation(material)
 
 
+def generate_composition_analysis(composition):
+    """
+    Analyze a fabric composition blend (e.g., "50% cotton 50% polyester") for sustainability.
+    
+    Args:
+        composition (str): A fabric composition string (e.g., "50% cotton 50% polyester")
+        
+    Returns:
+        dict: A dictionary containing:
+            - sustainability_rating: "Good", "Moderate", or "Poor"
+            - explanation: Brief sustainability summary
+            - ai_analysis: Detailed AI analysis from Gemini
+            - alternatives: List of better blends or materials
+        
+    Note:
+        Uses Google Gemini API to analyze the blend. Falls back to basic analysis if API unavailable.
+    """
+    
+    try:
+        # Get API key from environment variables
+        api_key = os.getenv('GEMINI_API_KEY')
+        
+        # If no API key is configured, return a fallback analysis
+        if not api_key:
+            return get_fallback_composition_analysis(composition)
+        
+        # Configure Gemini
+        genai.configure(api_key=api_key)
+
+        model = genai.GenerativeModel(
+            model_name="gemini-1.5-flash",
+            system_instruction="""
+You are an expert in sustainable fashion and textile environmental impact.
+
+Your job is to analyze fabric composition blends for sustainability.
+
+Rules:
+- Provide a clear sustainability rating: "Good", "Moderate", or "Poor"
+- Consider: recyclability, microplastics, water use, pesticides, biodegradability
+- Be concise and practical in recommendations
+- Format your response as JSON with these fields:
+  {
+    "sustainability_rating": "Good/Moderate/Poor",
+    "explanation": "Brief explanation of rating",
+    "analysis": "Detailed sustainability analysis",
+    "alternatives": ["better option 1", "better option 2"]
+  }
+"""
+        )
+
+        # Build the prompt for composition analysis
+        prompt = f"""
+        Analyze this fabric composition for environmental sustainability:
+        
+        Composition: {composition}
+        
+        Consider:
+        1. Each material's environmental impact
+        2. Whether the blend is recyclable
+        3. Microplastic shedding potential
+        4. Water and resource usage in production
+        5. Biodegradability of each component
+        
+        Provide:
+        - A sustainability rating (Good/Moderate/Poor)
+        - Brief explanation of the rating
+        - Detailed analysis
+        - Suggestions for better alternatives
+        
+        Format your response as a JSON object.
+        """
+
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.3,
+                "max_output_tokens": 300
+            }
+        )
+
+        # Parse the response
+        try:
+            # Extract JSON from response
+            response_text = response.text
+            
+            # Try to parse JSON if it's in the response
+            if '{' in response_text and '}' in response_text:
+                start_idx = response_text.find('{')
+                end_idx = response_text.rfind('}') + 1
+                json_str = response_text[start_idx:end_idx]
+                analysis_data = json.loads(json_str)
+            else:
+                # If no JSON found, create response from text
+                analysis_data = {
+                    'sustainability_rating': 'Moderate',
+                    'explanation': response_text[:200],
+                    'analysis': response_text,
+                    'alternatives': []
+                }
+            
+            return {
+                'sustainability_rating': analysis_data.get('sustainability_rating', 'Moderate'),
+                'explanation': analysis_data.get('explanation', 'Analysis complete'),
+                'ai_analysis': analysis_data.get('analysis', response_text),
+                'alternatives': analysis_data.get('alternatives', [])
+            }
+            
+        except json.JSONDecodeError:
+            # If JSON parsing fails, use the text as analysis
+            return {
+                'sustainability_rating': 'Moderate',
+                'explanation': 'Composition analyzed',
+                'ai_analysis': response.text,
+                'alternatives': []
+            }
+        
+    except Exception as e:
+        # Log the error
+        print(f"Error in generate_composition_analysis: {str(e)}")
+        
+        # Return a fallback analysis so the app still works
+        return get_fallback_composition_analysis(composition)
+
+
+def get_fallback_composition_analysis(composition):
+    """
+    Provide a fallback composition analysis when AI API is not available.
+    
+    Args:
+        composition (str): The fabric composition string
+        
+    Returns:
+        dict: Basic analysis with pre-determined sustainability rating
+    """
+    
+    composition_lower = composition.lower()
+    
+    # Simple heuristics for fallback analysis
+    poor_materials = ['polyester', 'acrylic', 'nylon', 'spandex']
+    good_materials = ['hemp', 'organic cotton', 'tencel', 'linen', 'modal']
+    
+    # Count material occurrences
+    poor_count = sum(1 for material in poor_materials if material in composition_lower)
+    good_count = sum(1 for material in good_materials if material in composition_lower)
+    
+    # Determine rating based on composition
+    if good_count > poor_count:
+        rating = 'Good'
+        explanation = 'This composition includes sustainable materials.'
+    elif poor_count > good_count:
+        rating = 'Poor'
+        explanation = 'This composition includes materials with significant environmental impact.'
+    else:
+        rating = 'Moderate'
+        explanation = 'This composition is a moderate blend with mixed environmental considerations.'
+    
+    return {
+        'sustainability_rating': rating,
+        'explanation': explanation,
+        'ai_analysis': 'AI analysis is temporarily unavailable. Basic assessment has been provided.',
+        'alternatives': ['100% Organic Cotton', '100% Hemp', 'Tencel/Lyocell blend', 'Recycled Polyester blend']
+    }
+
+
 def get_fallback_explanation(material):
     """
     Provide a fallback explanation when LLM API is not available.

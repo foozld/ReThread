@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ReThread Form Test</title>
+    <style>
+        body { font-family: Arial; margin: 20px; }
+        .test { background: #f0f0f0; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        button { padding: 10px 20px; cursor: pointer; }
+        #output { background: white; border: 1px solid #ccc; padding: 10px; margin-top: 10px; font-family: monospace; max-height: 300px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>ReThread Frontend Test</h1>
+    
+    <div class="test">
+        <h2>Material Analyzer Test</h2>
+        <form id="testMaterialForm">
+            <input type="text" id="testMaterialInput" placeholder="e.g., cotton" value="hemp">
+            <button type="submit">Test Analyze Material</button>
+        </form>
+    </div>
+    
+    <div class="test">
+        <h2>Composition Analyzer Test</h2>
+        <form id="testCompositionForm">
+            <input type="text" id="testCompositionInput" placeholder="e.g., 50% cotton 50% polyester" value="50% wool 50% acrylic">
+            <button type="submit">Test Analyze Composition</button>
+        </form>
+    </div>
+    
+    <h2>Console Output:</h2>
+    <div id="output"></div>
+    
+    <script>
+        const output = document.getElementById('output');
+        
+        function log(message) {
+            console.log(message);
+            output.innerHTML += message + '<br>';
+            output.scrollTop = output.scrollHeight;
+        }
+        
+        log('🔍 Page loaded, setting up test forms...');
+        
+        // Test form 1: Material
+        document.getElementById('testMaterialForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            log('📤 Material form submitted');
+            
+            const material = document.getElementById('testMaterialInput').value.trim();
+            log('Material: ' + material);
+            
+            try {
+                log('Sending POST to /analyze...');
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ material: material })
+                });
+                
+                log('Response status: ' + response.status);
+                const data = await response.json();
+                log('✅ Success: ' + data.success);
+                log('Material: ' + data.material);
+                log('Sustainability: ' + data.sustainability);
+            } catch (error) {
+                log('❌ Error: ' + error.message);
+            }
+        });
+        
+        // Test form 2: Composition
+        document.getElementById('testCompositionForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            log('📤 Composition form submitted');
+            
+            const composition = document.getElementById('testCompositionInput').value.trim();
+            log('Composition: ' + composition);
+            
+            try {
+                log('Sending POST to /analyze-composition...');
+                const response = await fetch('/analyze-composition', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ composition: composition })
+                });
+                
+                log('Response status: ' + response.status);
+                const data = await response.json();
+                log('✅ Success: ' + data.success);
+                log('Composition: ' + data.composition);
+                log('Rating: ' + data.sustainability_rating);
+            } catch (error) {
+                log('❌ Error: ' + error.message);
+            }
+        });
+        
+        log('✅ Test setup complete. Try filling the forms and clicking buttons.');
+    </script>
+</body>
+</html>

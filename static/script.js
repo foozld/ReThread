@@ -13,6 +13,7 @@
 // DOM ELEMENTS - Cache frequently used DOM elements for performance
 // ============================================================================
 
+// Single Material Analysis Elements
 const materialForm = document.getElementById('materialForm');
 const materialInput = document.getElementById('materialInput');
 const loadingSpinner = document.getElementById('loadingSpinner');
@@ -20,7 +21,7 @@ const errorContainer = document.getElementById('errorContainer');
 const resultsSection = document.getElementById('resultsSection');
 const analyzeAnotherBtn = document.getElementById('analyzeAnotherBtn');
 
-// Result display elements
+// Result display elements for single material
 const materialName = document.getElementById('materialName');
 const sustainabilityRating = document.getElementById('sustainabilityRating');
 const environmentalImpact = document.getElementById('environmentalImpact');
@@ -30,43 +31,103 @@ const alternativesList = document.getElementById('alternativesList');
 const aiExplanationCard = document.getElementById('aiExplanationCard');
 const aiExplanation = document.getElementById('aiExplanation');
 
+// Fabric Composition Analysis Elements
+const compositionForm = document.getElementById('compositionForm');
+const compositionInput = document.getElementById('compositionInput');
+const compositionLoadingSpinner = document.getElementById('compositionLoadingSpinner');
+const compositionErrorContainer = document.getElementById('compositionErrorContainer');
+const compositionResultsSection = document.getElementById('compositionResultsSection');
+const analyzeAnotherCompositionBtn = document.getElementById('analyzeAnotherCompositionBtn');
+
+// Composition result display elements
+const compositionTitle = document.getElementById('compositionTitle');
+const compositionRating = document.getElementById('compositionRating');
+const compositionAnalysis = document.getElementById('compositionAnalysis');
+const compositionAICard = document.getElementById('compositionAICard');
+const compositionAIAnalysis = document.getElementById('compositionAIAnalysis');
+
 // ============================================================================
 // EVENT LISTENERS - Set up event handlers for user interactions
 // ============================================================================
 
 /**
- * Handle form submission
- * When user clicks "Analyze", this function:
- * 1. Prevents default form behavior
- * 2. Gets the material name from input
- * 3. Sends it to the backend
- * 4. Displays results
+ * Handle single material form submission
+ * Prevents default form behavior and calls analyzeMaterial()
  */
-materialForm.addEventListener('submit', function(event) {
-    // Prevent the form from actually submitting
-    event.preventDefault();
-    
-    // Call the analyze function to process the material
-    analyzeMaterial();
-});
+if (materialForm) {
+    materialForm.addEventListener('submit', function(event) {
+        // Prevent the form from actually submitting
+        event.preventDefault();
+        
+        // Call the analyze function to process the material
+        analyzeMaterial();
+    });
+} else {
+    console.error('❌ materialForm not found in DOM');
+}
 
 /**
  * Handle "Analyze Another Material" button click
  * Resets the form and results to allow new analysis
  */
-analyzeAnotherBtn.addEventListener('click', function() {
-    // Clear the input field
-    materialInput.value = '';
-    
-    // Hide the results section
-    resultsSection.style.display = 'none';
-    
-    // Hide any error messages
-    errorContainer.style.display = 'none';
-    
-    // Focus on the input field so user can type immediately
-    materialInput.focus();
-});
+if (analyzeAnotherBtn) {
+    analyzeAnotherBtn.addEventListener('click', function() {
+        // Clear the input field
+        materialInput.value = '';
+        
+        // Hide the results section
+        resultsSection.style.display = 'none';
+        
+        // Hide any error messages
+        errorContainer.style.display = 'none';
+        
+        // Focus on the input field so user can type immediately
+        materialInput.focus();
+    });
+} else {
+    console.warn('⚠️ analyzeAnotherBtn not found - "Analyze Another" button will not work');
+}
+
+/**
+ * Handle fabric composition form submission
+ * When user clicks "Analyze Composition", this function:
+ * 1. Prevents default form behavior
+ * 2. Gets the composition input
+ * 3. Validates the input
+ * 4. Sends it to the backend
+ * 5. Displays results
+ */
+if (compositionForm) {
+    compositionForm.addEventListener('submit', function(event) {
+        // Prevent the form from actually submitting
+        event.preventDefault();
+        
+        // Call the analyze function to process the composition
+        analyzeComposition();
+    });
+} else {
+    console.error('❌ compositionForm not found in DOM');
+}
+
+/**
+ * Handle "Analyze Another Composition" button click
+ * Resets the form and results to allow new analysis
+ */
+if (analyzeAnotherCompositionBtn) {
+    analyzeAnotherCompositionBtn.addEventListener('click', function() {
+        // Clear the input field
+        compositionInput.value = '';
+        
+        // Hide the results section
+        compositionResultsSection.style.display = 'none';
+        
+        // Hide any error messages
+        compositionErrorContainer.textContent = '';
+        
+        // Focus on the input field so user can type immediately
+        compositionInput.focus();
+    });
+}
 
 // ============================================================================
 // MAIN FUNCTIONS
@@ -77,14 +138,20 @@ analyzeAnotherBtn.addEventListener('click', function() {
  * Gets the material name, validates it, and sends it to the backend
  */
 function analyzeMaterial() {
+    console.log('📊 analyzeMaterial() called');
+    
     // Get the material name and remove extra whitespace
     const material = materialInput.value.trim();
+    console.log('  Material input:', material);
     
     // Validate that the input is not empty
     if (!material) {
+        console.warn('⚠️ Material input is empty');
         showError('Please enter a material name to analyze');
         return;
     }
+    
+    console.log('✓ Validation passed, proceeding with analysis...');
     
     // Hide any previous error messages
     errorContainer.style.display = 'none';
@@ -94,6 +161,7 @@ function analyzeMaterial() {
     
     // Show loading spinner
     loadingSpinner.style.display = 'block';
+    console.log('✓ Loading spinner shown');
     
     // Call the API and process the response
     fetchMaterialAnalysis(material);
@@ -107,10 +175,14 @@ function analyzeMaterial() {
  */
 async function fetchMaterialAnalysis(material) {
     try {
+        console.log('🔄 Fetching material analysis for:', material);
+        
         // Create the request payload (JSON object with material name)
         const payload = {
             material: material
         };
+        
+        console.log('📤 Sending POST request to /analyze');
         
         // Send POST request to the backend
         const response = await fetch('/analyze', {
@@ -124,6 +196,8 @@ async function fetchMaterialAnalysis(material) {
             body: JSON.stringify(payload)
         });
         
+        console.log('📥 Received response, status:', response.status);
+        
         // Parse the response as JSON
         const data = await response.json();
         
@@ -132,11 +206,13 @@ async function fetchMaterialAnalysis(material) {
         
         // Check if the request was successful
         if (response.ok && data.success) {
+            console.log('✅ Analysis successful:', data);
             // Display the results on the page
             displayResults(data);
         } else {
             // Show error message from API or generic error
             const errorMsg = data.error || 'An error occurred while analyzing the material';
+            console.error('❌ API error:', errorMsg);
             showError(errorMsg);
         }
         
@@ -145,7 +221,7 @@ async function fetchMaterialAnalysis(material) {
         loadingSpinner.style.display = 'none';
         
         // Log the error to browser console for debugging
-        console.error('Error:', error);
+        console.error('❌ Network error:', error);
         
         // Show user-friendly error message
         showError('Failed to connect to the server. Please try again.');
@@ -253,6 +329,155 @@ function showError(message) {
 }
 
 // ============================================================================
+// FABRIC COMPOSITION ANALYSIS FUNCTIONS
+// ============================================================================
+
+/**
+ * Main function to analyze a fabric composition
+ * Gets the composition text, validates it, and sends it to the backend
+ */
+function analyzeComposition() {
+    console.log('📊 analyzeComposition() called');
+    
+    // Get the composition text and remove extra whitespace
+    const composition = compositionInput.value.trim();
+    console.log('  Composition input:', composition);
+    
+    // Validate that the input is not empty
+    if (!composition) {
+        console.warn('⚠️ Composition input is empty');
+        showCompositionError('Please enter a fabric composition to analyze');
+        return;
+    }
+    
+    console.log('✓ Validation passed, proceeding with analysis...');
+    
+    // Hide any previous error messages
+    compositionErrorContainer.textContent = '';
+    
+    // Hide results section (will show again after API response)
+    compositionResultsSection.style.display = 'none';
+    
+    // Show loading spinner
+    compositionLoadingSpinner.style.display = 'block';
+    console.log('✓ Loading spinner shown');
+    
+    // Call the API and process the response
+    fetchCompositionAnalysis(composition);
+}
+
+/**
+ * Fetch composition analysis from the backend API
+ * Sends a POST request to "/analyze-composition" endpoint
+ * 
+ * @param {string} composition - The fabric composition to analyze (e.g., "50% cotton 50% polyester")
+ */
+async function fetchCompositionAnalysis(composition) {
+    try {
+        console.log('🔄 Fetching composition analysis for:', composition);
+        
+        // Create the request payload
+        const payload = {
+            composition: composition
+        };
+        
+        console.log('📤 Sending POST request to /analyze-composition');
+        
+        // Send POST request to the backend
+        const response = await fetch('/analyze-composition', {
+            // Use POST method for sending data
+            method: 'POST',
+            // Specify that we're sending JSON
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            // Convert the payload to JSON string
+            body: JSON.stringify(payload)
+        });
+        
+        console.log('📥 Received response, status:', response.status);
+        
+        // Parse the response as JSON
+        const data = await response.json();
+        
+        // Hide loading spinner
+        compositionLoadingSpinner.style.display = 'none';
+        
+        // Check if the request was successful
+        if (response.ok && data.success) {
+            console.log('✅ Analysis successful:', data);
+            // Display the results on the page
+            displayCompositionResults(data);
+        } else {
+            // Show error message from API or generic error
+            const errorMsg = data.error || 'An error occurred while analyzing the composition';
+            console.error('❌ API error:', errorMsg);
+            showCompositionError(errorMsg);
+        }
+        
+    } catch (error) {
+        // Hide loading spinner
+        compositionLoadingSpinner.style.display = 'none';
+        
+        // Log the error to browser console for debugging
+        console.error('❌ Network error:', error);
+        
+        // Show user-friendly error message
+        showCompositionError('Failed to connect to the server. Please try again.');
+    }
+}
+
+/**
+ * Display the composition analysis results on the page
+ * Takes the API response and renders all the composition analysis information
+ * 
+ * @param {object} data - The API response object containing composition analysis
+ */
+function displayCompositionResults(data) {
+    // Set the composition input in the results
+    compositionTitle.textContent = `Analysis: ${data.composition}`;
+    
+    // Display sustainability rating
+    compositionRating.textContent = data.sustainability_rating;
+    // Add color class based on sustainability level
+    compositionRating.className = `result-value sustainability-${data.sustainability_rating.toLowerCase().replace(' ', '-')}`;
+    
+    // Display the composition analysis explanation
+    compositionAnalysis.textContent = data.explanation;
+    
+    // Display AI-generated analysis if available
+    if (data.ai_analysis) {
+        compositionAIAnalysis.textContent = data.ai_analysis;
+        compositionAICard.style.display = 'block';
+    } else {
+        compositionAICard.style.display = 'none';
+    }
+    
+    // Show the results section
+    compositionResultsSection.style.display = 'block';
+    
+    // Scroll to results so user can see them
+    compositionResultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/**
+ * Display a composition error message to the user
+ * Shows a visible error message in the composition error container
+ * 
+ * @param {string} message - The error message to display
+ */
+function showCompositionError(message) {
+    // Set the error message content
+    compositionErrorContainer.textContent = message;
+    
+    // Make the error container visible
+    compositionErrorContainer.style.display = 'block';
+    
+    // Scroll to the error so user notices it
+    compositionErrorContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+// ============================================================================
 // PAGE INITIALIZATION
 // ============================================================================
 
@@ -261,11 +486,26 @@ function showError(message) {
  * Sets up the UI to be ready for user interaction
  */
 function initializePage() {
-    // Focus on the input field so user can start typing immediately
-    materialInput.focus();
+    console.log('🌿 ReThread - Sustainable Fashion Analyzer initializing...');
     
-    // Log a welcome message to browser console (for debugging)
-    console.log('🌿 ReThread - Sustainable Fashion Analyzer loaded successfully!');
+    // Debug: Log which elements were found
+    console.log('✓ DOM Elements Status:');
+    console.log('  Material Form:', materialForm ? '✅ Found' : '❌ NOT FOUND');
+    console.log('  Material Input:', materialInput ? '✅ Found' : '❌ NOT FOUND');
+    console.log('  Composition Form:', compositionForm ? '✅ Found' : '❌ NOT FOUND');
+    console.log('  Composition Input:', compositionInput ? '✅ Found' : '❌ NOT FOUND');
+    console.log('  Loading Spinner:', loadingSpinner ? '✅ Found' : '❌ NOT FOUND');
+    console.log('  Composition Loading Spinner:', compositionLoadingSpinner ? '✅ Found' : '❌ NOT FOUND');
+    
+    // Only focus if materialInput exists
+    if (materialInput) {
+        materialInput.focus();
+        console.log('✅ Focus set to material input field');
+    } else {
+        console.error('❌ Cannot set focus - materialInput not found');
+    }
+    
+    console.log('🌿 ReThread loaded successfully!');
     console.log('Ready to analyze materials. Enter a fabric name to get started.');
 }
 

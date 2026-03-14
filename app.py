@@ -49,6 +49,16 @@ def index():
     return render_template('index.html')
 
 
+@app.route('/test-forms')
+def test_forms():
+    """
+    Serve a simple form test page for debugging frontend-backend communication.
+    This page has minimal JavaScript to isolate form submission issues.
+    """
+    return render_template('test_forms.html')
+
+
+
 @app.route('/analyze', methods=['POST'])
 def analyze():
     """
@@ -120,6 +130,80 @@ def analyze():
             response['ai_explanation'] = f"AI explanation unavailable: {str(e)}"
         
         return jsonify(response), 200
+    
+    except Exception as e:
+        # Handle any unexpected errors
+        return jsonify({
+            'error': f'Server error: {str(e)}',
+            'success': False
+        }), 500
+
+
+@app.route('/analyze-composition', methods=['POST'])
+def analyze_composition():
+    """
+    API endpoint to analyze a fabric composition blend.
+    
+    Expected JSON input:
+    {
+        "composition": "50% cotton 50% polyester"
+    }
+    
+    Returns JSON with:
+    - composition (the input)
+    - sustainability_rating (Good/Moderate/Poor)
+    - explanation (sustainability analysis)
+    - ai_analysis (AI-generated insights from Gemini)
+    """
+    try:
+        # Get the JSON data from the request
+        data = request.get_json()
+        
+        # Validate that composition field exists
+        if not data or 'composition' not in data:
+            return jsonify({
+                'error': 'Please provide a fabric composition',
+                'success': False
+            }), 400
+        
+        # Get the composition text
+        composition = data['composition'].strip()
+        
+        # Validate composition is not empty
+        if not composition:
+            return jsonify({
+                'error': 'Fabric composition cannot be empty',
+                'success': False
+            }), 400
+        
+        # Basic validation: composition should contain percentage or material names
+        composition_lower = composition.lower()
+        has_percentage = '%' in composition
+        
+        # Try to analyze the composition with AI
+        try:
+            from ai_helper import generate_composition_analysis
+            analysis_result = generate_composition_analysis(composition)
+            
+            return jsonify({
+                'success': True,
+                'composition': composition,
+                'sustainability_rating': analysis_result.get('sustainability_rating', 'Moderate'),
+                'explanation': analysis_result.get('explanation', 'Analysis complete'),
+                'ai_analysis': analysis_result.get('ai_analysis', ''),
+                'alternatives': analysis_result.get('alternatives', [])
+            }), 200
+        
+        except ImportError:
+            # If generate_composition_analysis doesn't exist yet, use fallback
+            return jsonify({
+                'success': True,
+                'composition': composition,
+                'sustainability_rating': 'Moderate',
+                'explanation': 'Composition analysis requires AI service. Please ensure your API key is configured.',
+                'ai_analysis': 'AI analysis is temporarily unavailable. Please try again later.',
+                'alternatives': []
+            }), 200
     
     except Exception as e:
         # Handle any unexpected errors
