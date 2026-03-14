@@ -16,19 +16,22 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def generate_explanation(material):
+def generate_explanation(material, material_data):
     """
     Generate a natural language explanation of a material's environmental impact.
     
     Args:
         material (str): The name of the clothing material
+        material_data (dict): The material's data including sustainability, impact, 
+                            water_usage, biodegradable status, and alternatives
         
     Returns:
         str: A formatted explanation of the material's sustainability
         
     Note:
         Uses Google Gemini API for generation. Falls back to pre-written
-        explanations if the API key is not available.
+        explanations if the API key is not available. Material data provides
+        context for more detailed and accurate explanations.
     """
     
     try:
@@ -42,20 +45,45 @@ def generate_explanation(material):
         # Configure Gemini
         genai.configure(api_key=api_key)
 
-        model = genai.GenerativeModel("gemini-1.5-flash")
+        model = genai.GenerativeModel(
+        model_name="gemini-1.5-flash",
+        system_instruction="""
+        You are an expert in sustainable fashion and textile environmental impact.
 
+        Your job is to explain clothing material sustainability using ONLY the data provided.
+
+        Rules:
+        - Keep explanations concise (2–3 sentences).
+        - Do not invent new facts.
+        - Base the explanation strictly on the provided material data.
+        - Recommend sustainable alternatives when appropriate.
+        """
+        )
+
+        # Build a rich prompt with material data context
+        alternatives_str = ", ".join(material_data.get('alternatives', []))
+        
         prompt = f"""
-        Explain the environmental sustainability of the clothing material "{material}".
+        Material: {material}
 
-        Include:
-        - environmental impact
-        - why it is or isn't sustainable
-        - sustainable alternatives
+        Material data:
+        Sustainability: {material_data.get('sustainability')}
+        Impact: {material_data.get('impact')}
+        Water usage: {material_data.get('water_usage')}
+        Biodegradable: {material_data.get('biodegradable')}
+        Alternatives: {', '.join(material_data.get('alternatives', []))}
 
-        Keep the explanation concise (2–3 sentences).
+        Explain the sustainability of this material.
         """
 
-        response = model.generate_content(prompt)
+        response = model.generate_content(
+            prompt,
+            generation_config={
+                "temperature": 0.3,
+                "max_output_tokens": 120
+            }
+        )
+
         return response.text
         
         
