@@ -113,7 +113,7 @@ def analyze():
         
         # Try to generate an AI explanation if API key is available
         try:
-            ai_explanation = generate_explanation(material_found)
+            ai_explanation = generate_explanation(material_found, material_data)
             response['ai_explanation'] = ai_explanation
         except Exception as e:
             # If AI fails, include a message but don't fail the entire request
