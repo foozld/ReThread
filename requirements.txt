@@ -1,0 +1,26 @@
+# ReThread - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core web framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Environment variables management
+python-dotenv==1.0.0
+
+# Optional: For LLM API integration (uncomment when integrating OpenAI/similar)
+# requests==2.31.0
+
+# Optional: For better error handling
+# colorama==0.4.6
+
+# Optional: For production deployment
+# gunicorn==21.2.0
+# python-decouple==3.8
+
+# Development dependencies (uncomment for development)
+# pip-tools==7.3.0          # For managing requirements
+# black==23.7.0             # For code formatting
+# flake8==6.0.0             # For code linting
+# pylint==2.17.5            # For code analysis
+# pytest==7.4.0             # For unit testing

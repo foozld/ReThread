@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Character encoding for proper text display -->
+    <meta charset="UTF-8">
+    
+    <!-- Viewport settings for responsive design on mobile devices -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title shown in browser tab -->
+    <title>ReThread - Sustainable Fashion Analyzer</title>
+    
+    <!-- Link to external CSS stylesheet -->
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <!-- Main container for the application -->
+    <div class="container">
+        
+        <!-- Header section with title and introduction -->
+        <header class="header">
+            <!-- App logo/title -->
+            <h1 class="app-title">🌿 ReThread</h1>
+            
+            <!-- App tagline/subtitle -->
+            <p class="app-subtitle">Discover the Environmental Impact of Your Fabrics</p>
+        </header>
+        
+        <!-- Description section explaining the tool -->
+        <section class="info-section">
+            <p class="description">
+                ReThread helps you make sustainable fashion choices by analyzing the environmental 
+                impact of clothing materials. Enter a fabric name to learn about its sustainability, 
+                environmental impact, water usage, and find better alternatives.
+            </p>
+        </section>
+        
+        <!-- Main analysis form section -->
+        <section class="analysis-section">
+            <!-- Form for material input -->
+            <form id="materialForm" class="form-container">
+                <!-- Label for the input field -->
+                <label for="materialInput" class="form-label">Enter a Clothing Material:</label>
+                
+                <!-- Input field where users type the material name -->
+                <input 
+                    type="text" 
+                    id="materialInput" 
+                    class="form-input" 
+                    placeholder="e.g., polyester, cotton, hemp..." 
+                    autocomplete="off"
+                    required
+                >
+                
+                <!-- Submit button to analyze the material -->
+                <button type="submit" class="form-button">Analyze</button>
+            </form>
+            
+            <!-- Loading spinner (hidden by default, shown during API call) -->
+            <div id="loadingSpinner" class="loading-spinner" style="display: none;">
+                <div class="spinner"></div>
+                <p>Analyzing material...</p>
+            </div>
+            
+            <!-- Error message container (hidden by default) -->
+            <div id="errorContainer" class="error-message" style="display: none;"></div>
+        </section>
+        
+        <!-- Results section (hidden by default, shown when material is analyzed) -->
+        <section id="resultsSection" class="results-section" style="display: none;">
+            <!-- Main result card -->
+            <div class="result-card">
+                <!-- Material name heading -->
+                <h2 id="materialName" class="result-title"></h2>
+                
+                <!-- Sustainability rating with color indicator -->
+                <div class="result-item">
+                    <span class="result-label">Sustainability Rating:</span>
+                    <span id="sustainabilityRating" class="result-value"></span>
+                </div>
+                
+                <!-- Environmental impact description -->
+                <div class="result-item">
+                    <span class="result-label">Environmental Impact:</span>
+                    <span id="environmentalImpact" class="result-value"></span>
+                </div>
+                
+                <!-- Water usage information -->
+                <div class="result-item">
+                    <span class="result-label">Water Usage:</span>
+                    <span id="waterUsage" class="result-value"></span>
+                </div>
+                
+                <!-- Biodegradability status -->
+                <div class="result-item">
+                    <span class="result-label">Biodegradable:</span>
+                    <span id="biodegradable" class="result-value"></span>
+                </div>
+                
+                <!-- Sustainable alternatives section -->
+                <div class="result-item alternatives-section">
+                    <span class="result-label">Sustainable Alternatives:</span>
+                    <div id="alternativesList" class="alternatives-list"></div>
+                </div>
+            </div>
+            
+            <!-- AI-generated explanation card (if available) -->
+            <div id="aiExplanationCard" class="ai-explanation-card" style="display: none;">
+                <h3 class="ai-title">🤖 Detailed Explanation</h3>
+                <p id="aiExplanation" class="ai-text"></p>
+                <p class="ai-note">Generated by AI to provide deeper insights</p>
+            </div>
+            
+            <!-- Button to analyze another material -->
+            <button id="analyzeAnotherBtn" class="form-button secondary">Analyze Another Material</button>
+        </section>
+        
+        <!-- Footer with helpful information -->
+        <footer class="footer">
+            <p class="footer-text">
+                Made for sustainable fashion choices | 💚 For the Planet
+            </p>
+        </footer>
+        
+    </div>
+    
+    <!-- Link to external JavaScript file -->
+    <script src="/static/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+{
+  "Polyester": {
+    "sustainability": "Low",
+    "impact": "Microplastic pollution and fossil fuel production",
+    "water_usage": "Low",
+    "biodegradable": "No (200+ years)",
+    "alternatives": ["Tencel", "Hemp", "Organic Cotton", "Recycled Polyester"]
+  },
+  "Cotton": {
+    "sustainability": "Medium",
+    "impact": "High pesticide use and water consumption",
+    "water_usage": "Very High (2,700 liters per shirt)",
+    "biodegradable": "Yes (5 months)",
+    "alternatives": ["Organic Cotton", "Hemp", "Bamboo", "Linen"]
+  },
+  "Organic Cotton": {
+    "sustainability": "High",
+    "impact": "Minimal pesticides, sustainable water management",
+    "water_usage": "High (still uses significant water)",
+    "biodegradable": "Yes (5 months)",
+    "alternatives": ["Hemp", "Tencel", "Linen"]
+  },
+  "Hemp": {
+    "sustainability": "Very High",
+    "impact": "Highly renewable, carbon sequestering, minimal pesticides",
+    "water_usage": "Low (minimal irrigation needed)",
+    "biodegradable": "Yes (2 weeks)",
+    "alternatives": ["Organic Cotton", "Flax/Linen", "Bamboo"]
+  },
+  "Tencel": {
+    "sustainability": "High",
+    "impact": "Closed-loop production, sustainable wood source",
+    "water_usage": "Low (sustainable production)",
+    "biodegradable": "Yes (1-5 months)",
+    "alternatives": ["Organic Cotton", "Hemp", "Bamboo"]
+  },
+  "Nylon": {
+    "sustainability": "Low",
+    "impact": "Fossil fuel dependent, slow biodegradation, microplastic shedding",
+    "water_usage": "Low",
+    "biodegradable": "No (30-40 years)",
+    "alternatives": ["Hemp", "Organic Cotton", "Recycled Nylon", "Tencel"]
+  },
+  "Wool": {
+    "sustainability": "Medium-High",
+    "impact": "Natural and biodegradable but livestock emissions",
+    "water_usage": "Medium (for livestock)",
+    "biodegradable": "Yes (mainly degradable)",
+    "alternatives": ["Organic Cotton", "Hemp", "Bamboo", "Peace Silk"]
+  },
+  "Silk": {
+    "sustainability": "Medium",
+    "impact": "Natural but sericulture is resource-intensive",
+    "water_usage": "Medium (water for cocoon production)",
+    "biodegradable": "Yes (protein fiber)",
+    "alternatives": ["Peace Silk", "Tencel", "Hemp", "Organic Cotton"]
+  },
+  "Bamboo": {
+    "sustainability": "High",
+    "impact": "Highly renewable and fast-growing plant",
+    "water_usage": "Low (minimal water needed)",
+    "biodegradable": "Yes (rapid degradation)",
+    "alternatives": ["Hemp", "Organic Cotton", "Tencel", "Linen"]
+  },
+  "Acrylic": {
+    "sustainability": "Low",
+    "impact": "Petroleum-based, non-biodegradable, microfiber shedding",
+    "water_usage": "Low",
+    "biodegradable": "No (likely 200+ years)",
+    "alternatives": ["Merino Wool", "Organic Cotton", "Hemp", "Alpaca"]
+  },
+  "Linen": {
+    "sustainability": "Very High",
+    "impact": "Minimal pesticides, biodegradable, minimal processing",
+    "water_usage": "Low (rainfed cultivation)",
+    "biodegradable": "Yes (2 weeks)",
+    "alternatives": ["Hemp", "Organic Cotton", "Bamboo"]
+  },
+  "Recycled Polyester": {
+    "sustainability": "Medium-High",
+    "impact": "Reuses existing plastic, reduces new production",
+    "water_usage": "Very Low",
+    "biodegradable": "No (same as regular polyester)",
+    "alternatives": ["Hemp", "Organic Cotton", "Tencel", "Linen"]
+  }
+}
