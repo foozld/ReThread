@@ -303,9 +303,9 @@ def server_error(error):
 
 if __name__ == '__main__':
     # Run the Flask development server
-    # Debug mode is ON for development - TURN OFF in production!
+    # Debug mode is OFF for production
     app.run(
-        debug=True,
-        host='127.0.0.1',
+        debug=False,
+        host='0.0.0.0',
         port=5000
     )
