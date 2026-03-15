@@ -107,7 +107,7 @@ Provide a concise 2-3 sentence explanation of this material's sustainability bas
 
         message = client.messages.create(
             model="claude-opus-4-1-20250805",
-            max_tokens=150,
+            max_tokens=100,
             temperature=0.3,
             system="You are an expert in sustainable fashion and textile environmental impact. Explain sustainability clearly using the provided data.",
             messages=[
