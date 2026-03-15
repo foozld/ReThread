@@ -68,17 +68,6 @@ ReThread/
 - ✅ Biodegradability info
 - ✅ Alternative suggestions
 
-## 🎓 Learning Resources
-
-### For Your Team
-- **Flask Documentation**: https://flask.palletsprojects.com/
-- **JavaScript Fetch API**: https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API
-- **CSS Flexbox**: https://css-tricks.com/snippets/css/a-guide-to-flexbox/
-
-### For LLM Integration
-- **OpenAI API Docs**: https://platform.openai.com/docs/
-- **Hugging Face Inference**: https://huggingface.co/docs/api-inference/
-
 ## 🚢 Deployment (After Hackathon)
 
 ### Quick Deployment to Heroku
