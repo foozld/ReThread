@@ -11,7 +11,7 @@ from flask import Flask, render_template, request, jsonify
 import json
 import os
 from dotenv import load_dotenv
-from ai_helper import generate_explanation
+from ai_helper import generate_fabric_explanation
 
 # Load environment variables from .env file
 load_dotenv()
@@ -124,7 +124,7 @@ def analyze():
         
         # Try to generate an AI explanation if API key is available
         try:
-            ai_explanation = generate_explanation(material_found, material_data)
+            ai_explanation = generate_fabric_explanation(material_found, material_data)
             response['ai_explanation'] = ai_explanation
         except Exception as e:
             # If AI fails, include a message but don't fail the entire request
@@ -183,8 +183,8 @@ def analyze_composition():
         
         # Try to analyze the composition with AI
         try:
-            from ai_helper import generate_composition_analysis
-            analysis_result = generate_composition_analysis(composition)
+            from ai_helper import generate_composition_explanation
+            analysis_result = generate_composition_explanation(composition, 0, 'Moderate', MATERIALS)
             
             return jsonify({
                 'success': True,
@@ -196,7 +196,7 @@ def analyze_composition():
             }), 200
         
         except ImportError:
-            # If generate_composition_analysis doesn't exist yet, use fallback
+            # If generate_composition_explanation doesn't exist, use fallback
             return jsonify({
                 'success': True,
                 'composition': composition,
