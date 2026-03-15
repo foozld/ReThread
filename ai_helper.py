@@ -1,24 +1,25 @@
 """
 ReThread - AI Helper Module
-Google Gemini Integration for Environmental Impact Explanations
+Anthropic Claude Integration for Environmental Impact Explanations
 
-This module handles integration with Google's Generative AI (Gemini) to generate
+This module handles integration with Anthropic's Claude AI to generate
 detailed, human-friendly explanations of clothing material sustainability.
 It includes graceful fallback if the API is unavailable.
 """
 
 import os
 import json
-import google.generativeai as genai
+import anthropic
 from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
+api_key = os.getenv('ANTHROPIC_API_KEY')
+print("API KEY LOADED:", api_key)
 
-
-def generate_explanation(material, material_data):
+def generate_fabric_explanation(material, material_data):
     """
-    Generate a natural language explanation of a material's environmental impact.
+    Generate a natural language explanation of a single material's environmental impact using Claude.
     
     Args:
         material (str): The name of the clothing material
@@ -29,194 +30,214 @@ def generate_explanation(material, material_data):
         str: A formatted explanation of the material's sustainability
         
     Note:
-        Uses Google Gemini API for generation. Falls back to pre-written
-        explanations if the API key is not available. Material data provides
-        context for more detailed and accurate explanations.
+        Uses Anthropic Claude API for generation. Falls back to pre-written
+        explanations if the API key is not available.
     """
     
     try:
         # Get API key from environment variables
-        api_key = os.getenv('GEMINI_API_KEY')
+        api_key = os.getenv('ANTHROPIC_API_KEY')
         
         # If no API key is configured, return a fallback explanation
         if not api_key:
             return get_fallback_explanation(material)
         
-        # Configure Gemini
-        genai.configure(api_key=api_key)
-
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            system_instruction="""
-You are an expert in sustainable fashion and textile environmental impact.
-
-Your job is to explain clothing material sustainability using ONLY the data provided.
-
-Rules:
-- Keep explanations concise (2–3 sentences).
-- Do not invent new facts.
-- Base the explanation strictly on the provided material data.
-- Recommend sustainable alternatives when appropriate.
-"""
-        )
-
-        # Build a rich prompt with material data context
-        alternatives_str = ", ".join(material_data.get('alternatives', []))
+        # Initialize Anthropic client
+        client = anthropic.Anthropic(api_key=api_key)
         
-        prompt = f"""
-        Material: {material}
-
-        Material data:
-        Sustainability: {material_data.get('sustainability')}
-        Impact: {material_data.get('impact')}
-        Water usage: {material_data.get('water_usage')}
-        Biodegradable: {material_data.get('biodegradable')}
-        Alternatives: {', '.join(material_data.get('alternatives', []))}
-
-        Explain the sustainability of this material.
-        """
-
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "temperature": 0.3,
-                "max_output_tokens": 120
-            }
-        )
-
-        return response.text
+        # Build the prompt with material data
+        alternatives_str = ", ".join(material_data.get('alternatives', [])) if material_data.get('alternatives') else "None listed"
         
+        prompt = f"""Material: {material}
+
+Material Sustainability Data:
+- Sustainability Rating: {material_data.get('sustainability', 'Unknown')}
+- Environmental Impact: {material_data.get('impact', 'No information')}
+- Water Usage: {material_data.get('water_usage', 'Unknown')}
+- Biodegradable: {material_data.get('biodegradable', 'Unknown')}
+- Sustainable Alternatives: {alternatives_str}
+
+Provide a concise 2-3 sentence explanation of this material's sustainability based on the data above. Be practical and actionable in your recommendation."""
+
+        message = client.messages.create(
+            model="claude-opus-4-1-20250805",
+            max_tokens=150,
+            temperature=0.3,
+            system="You are an expert in sustainable fashion and textile environmental impact. Explain sustainability clearly using the provided data.",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+        
+        return message.content[0].text
         
     except Exception as e:
-        # Log the error (in production, use proper logging)
-        print(f"Error in generate_explanation: {str(e)}")
+        # Log the error
+        print(f"Error in generate_fabric_explanation: {str(e)}")
         
         # Return a fallback explanation so the app still works
         return get_fallback_explanation(material)
 
 
-def generate_composition_analysis(composition):
+
+def generate_composition_explanation(composition, weighted_score, rating, materials_data):
     """
-    Analyze a fabric composition blend (e.g., "50% cotton 50% polyester") for sustainability.
+    Generate an AI explanation for a multi-fabric garment composition using Claude.
     
     Args:
-        composition (str): A fabric composition string (e.g., "50% cotton 50% polyester")
+        composition: Can be either:
+                   - A list of dicts: [{"material": "Cotton", "percent": 60}, {"material": "Polyester", "percent": 40}]
+                   - A string: "60% cotton 50% polyester" (will be parsed)
+        weighted_score (float): Calculated weighted sustainability score (0-100)
+        rating (str): Overall sustainability rating ("Good", "Moderate", or "Poor")
+        materials_data (dict): Database of all material sustainability data
         
     Returns:
         dict: A dictionary containing:
-            - sustainability_rating: "Good", "Moderate", or "Poor"
-            - explanation: Brief sustainability summary
-            - ai_analysis: Detailed AI analysis from Gemini
-            - alternatives: List of better blends or materials
+            - sustainability_rating: The overall rating
+            - explanation: Brief summary of the blend's sustainability
+            - ai_analysis: Detailed AI analysis from Claude
+            - alternatives: Suggestions for more sustainable compositions
         
     Note:
-        Uses Google Gemini API to analyze the blend. Falls back to basic analysis if API unavailable.
+        Uses Anthropic Claude API. Falls back to basic analysis if API unavailable.
     """
     
     try:
+        # Parse composition if it's a string
+        if isinstance(composition, str):
+            composition_list = _parse_composition_string(composition, materials_data)
+            if not composition_list:
+                # If parsing failed, use fallback
+                return get_fallback_composition_analysis(composition)
+        else:
+            composition_list = composition
+        
         # Get API key from environment variables
-        api_key = os.getenv('GEMINI_API_KEY')
+        api_key = os.getenv('ANTHROPIC_API_KEY')
         
         # If no API key is configured, return a fallback analysis
         if not api_key:
             return get_fallback_composition_analysis(composition)
         
-        # Configure Gemini
-        genai.configure(api_key=api_key)
+        # Initialize Anthropic client
+        client = anthropic.Anthropic(api_key=api_key)
+        
+        # Build composition string for the prompt
+        composition_str = ", ".join([f"{item['percent']}% {item['material']}" for item in composition_list])
+        
+        # Build material impact summary
+        material_impacts = []
+        for item in composition_list:
+            material_name = item['material']
+            percent = item['percent']
+            if material_name in materials_data:
+                impact = materials_data[material_name].get('impact', 'Unknown impact')
+                material_impacts.append(f"- {percent}% {material_name}: {impact}")
+        
+        material_impacts_str = "\n".join(material_impacts) if material_impacts else "Material details not available"
+        
+        # Build the prompt
+        prompt = f"""Analyze this fabric composition for sustainability:
 
-        model = genai.GenerativeModel(
-            model_name="gemini-1.5-flash",
-            system_instruction="""
-You are an expert in sustainable fashion and textile environmental impact.
+Composition: {composition_str}
 
-Your job is to analyze fabric composition blends for sustainability.
+Overall Sustainability Score: {weighted_score:.1f}/100
+Overall Rating: {rating}
 
-Rules:
-- Provide a clear sustainability rating: "Good", "Moderate", or "Poor"
-- Consider: recyclability, microplastics, water use, pesticides, biodegradability
-- Be concise and practical in recommendations
-- Format your response as JSON with these fields:
-  {
-    "sustainability_rating": "Good/Moderate/Poor",
-    "explanation": "Brief explanation of rating",
-    "analysis": "Detailed sustainability analysis",
-    "alternatives": ["better option 1", "better option 2"]
-  }
-"""
+Material Breakdown:
+{material_impacts_str}
+
+Provide:
+1. A brief assessment (1-2 sentences) of this garment's overall sustainability
+2. Which material(s) contribute most to environmental impact
+3. One specific recommendation to improve sustainability
+Keep your response concise and actionable."""
+
+        message = client.messages.create(
+            model="claude-opus-4-1-20250805",
+            max_tokens=150,
+            temperature=0.3,
+            system="You are an expert in sustainable fashion and textile environmental impact. Provide clear, practical sustainability guidance based on the provided material composition data.",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
         )
-
-        # Build the prompt for composition analysis
-        prompt = f"""
-        Analyze this fabric composition for environmental sustainability:
         
-        Composition: {composition}
+        explanation_text = message.content[0].text
         
-        Consider:
-        1. Each material's environmental impact
-        2. Whether the blend is recyclable
-        3. Microplastic shedding potential
-        4. Water and resource usage in production
-        5. Biodegradability of each component
-        
-        Provide:
-        - A sustainability rating (Good/Moderate/Poor)
-        - Brief explanation of the rating
-        - Detailed analysis
-        - Suggestions for better alternatives
-        
-        Format your response as a JSON object.
-        """
-
-        response = model.generate_content(
-            prompt,
-            generation_config={
-                "temperature": 0.3,
-                "max_output_tokens": 300
-            }
-        )
-
-        # Parse the response
-        try:
-            # Extract JSON from response
-            response_text = response.text
-            
-            # Try to parse JSON if it's in the response
-            if '{' in response_text and '}' in response_text:
-                start_idx = response_text.find('{')
-                end_idx = response_text.rfind('}') + 1
-                json_str = response_text[start_idx:end_idx]
-                analysis_data = json.loads(json_str)
-            else:
-                # If no JSON found, create response from text
-                analysis_data = {
-                    'sustainability_rating': 'Moderate',
-                    'explanation': response_text[:200],
-                    'analysis': response_text,
-                    'alternatives': []
-                }
-            
-            return {
-                'sustainability_rating': analysis_data.get('sustainability_rating', 'Moderate'),
-                'explanation': analysis_data.get('explanation', 'Analysis complete'),
-                'ai_analysis': analysis_data.get('analysis', response_text),
-                'alternatives': analysis_data.get('alternatives', [])
-            }
-            
-        except json.JSONDecodeError:
-            # If JSON parsing fails, use the text as analysis
-            return {
-                'sustainability_rating': 'Moderate',
-                'explanation': 'Composition analyzed',
-                'ai_analysis': response.text,
-                'alternatives': []
-            }
+        return {
+            'sustainability_rating': rating,
+            'explanation': f"This garment composition scores {weighted_score:.0f}/100 on sustainability.",
+            'ai_analysis': explanation_text,
+            'alternatives': [
+                "100% Organic Cotton",
+                "70% Hemp, 30% Organic Cotton",
+                "Tencel/Lyocell blend",
+                "Recycled Polyester blend"
+            ]
+        }
         
     except Exception as e:
         # Log the error
-        print(f"Error in generate_composition_analysis: {str(e)}")
+        print(f"Error in generate_composition_explanation: {str(e)}")
         
         # Return a fallback analysis so the app still works
         return get_fallback_composition_analysis(composition)
+
+
+def _parse_composition_string(composition_str, materials_data):
+    """
+    Parse a composition string like "60% cotton 50% polyester" into a list of dicts.
+    
+    Args:
+        composition_str (str): String like "60% cotton 50% polyester"
+        materials_data (dict): Database to lookup material names
+        
+    Returns:
+        list: List of dicts like [{"material": "Cotton", "percent": 60}, ...]
+              or None if parsing fails
+    """
+    try:
+        import re
+        
+        # Pattern to match percentage and material name
+        # Matches "60% cotton" or "60% organic cotton"
+        pattern = r'(\d+)\s*%\s*([a-zA-Z\s]+)'
+        matches = re.findall(pattern, composition_str, re.IGNORECASE)
+        
+        if not matches:
+            return None
+        
+        composition_list = []
+        for percent_str, material_name in matches:
+            percent = int(percent_str)
+            material_name_clean = material_name.strip()
+            
+            # Try to find the material in the database (case-insensitive)
+            found_material = None
+            for db_material in materials_data.keys():
+                if db_material.lower() == material_name_clean.lower():
+                    found_material = db_material
+                    break
+            
+            if found_material:
+                composition_list.append({
+                    'material': found_material,
+                    'percent': percent
+                })
+            else:
+                # Material not found, but include it anyway
+                composition_list.append({
+                    'material': material_name_clean,
+                    'percent': percent
+                })
+        
+        return composition_list if composition_list else None
+        
+    except Exception as e:
+        print(f"Error parsing composition string: {str(e)}")
+        return None
 
 
 def get_fallback_composition_analysis(composition):
@@ -224,27 +245,48 @@ def get_fallback_composition_analysis(composition):
     Provide a fallback composition analysis when AI API is not available.
     
     Args:
-        composition (str): The fabric composition string
+        composition: Can be either a list or a string composition
         
     Returns:
         dict: Basic analysis with pre-determined sustainability rating
     """
     
-    composition_lower = composition.lower()
+    # Convert to string for analysis
+    if isinstance(composition, list):
+        composition_str = " ".join([f"{item.get('percent', 0)}% {item.get('material', 'Unknown')}" 
+                                    for item in composition]).lower()
+    else:
+        composition_str = str(composition).lower()
     
     # Simple heuristics for fallback analysis
     poor_materials = ['polyester', 'acrylic', 'nylon', 'spandex']
     good_materials = ['hemp', 'organic cotton', 'tencel', 'linen', 'modal']
     
-    # Count material occurrences
-    poor_count = sum(1 for material in poor_materials if material in composition_lower)
-    good_count = sum(1 for material in good_materials if material in composition_lower)
+    # Count material occurrences and weight by percentage if available
+    poor_score = 0
+    good_score = 0
+    
+    if isinstance(composition, list):
+        for item in composition:
+            material = item.get('material', '').lower()
+            percent = item.get('percent', 0)
+            
+            if any(poor_mat in material for poor_mat in poor_materials):
+                poor_score += percent
+            if any(good_mat in material for good_mat in good_materials):
+                good_score += percent
+    else:
+        # Fallback for string composition
+        poor_count = sum(1 for material in poor_materials if material in composition_str)
+        good_count = sum(1 for material in good_materials if material in composition_str)
+        poor_score = poor_count * 25
+        good_score = good_count * 25
     
     # Determine rating based on composition
-    if good_count > poor_count:
+    if good_score > poor_score:
         rating = 'Good'
         explanation = 'This composition includes sustainable materials.'
-    elif poor_count > good_count:
+    elif poor_score > good_score:
         rating = 'Poor'
         explanation = 'This composition includes materials with significant environmental impact.'
     else:
@@ -291,7 +333,13 @@ def get_fallback_explanation(material):
         
         'bamboo': 'Bamboo is a highly renewable resource that grows quickly and requires minimal inputs. However, processing into fabric can use harmful chemicals. Look for bamboo fabrics processed with sustainable methods.',
         
-        'acrylic': 'Acrylic is a synthetic petroleum-based fiber that does not biodegrade for many decades. It sheds microfibers when washed, polluting waterways. Consider natural or sustainably-produced alternatives.'
+        'acrylic': 'Acrylic is a synthetic petroleum-based fiber that does not biodegrade for many decades. It sheds microfibers when washed, polluting waterways. Consider natural or sustainably-produced alternatives.',
+        
+        'linen': 'Linen is made from flax plant fibers and is highly sustainable. It requires minimal pesticides, has low water usage through rainfed cultivation, and is biodegradable within weeks. Linen is excellent for environmental sustainability.',
+        
+        'recycled polyester': 'Recycled polyester gives new life to existing plastic waste, reducing the need for new petroleum-based production. While it still sheds microfibers, it has a lower environmental impact than virgin polyester and helps reduce landfill waste.',
+        
+        'modal': 'Modal is a semi-synthetic fiber made from beech pulp using an eco-friendly closed-loop production process. It uses less water than cotton, is biodegradable, and represents a sustainable choice for fabric production.',
     }
     
     # Return the specific explanation if available, otherwise a generic message
@@ -305,29 +353,29 @@ def get_fallback_explanation(material):
 
 def setup_api_integration():
     """
-    Helper function to display instructions for setting up Google Gemini API.
+    Helper function to display instructions for setting up Anthropic Claude API.
     Call this during development to guide setup.
     """
     instructions = """
-    ReThread Gemini AI Integration Setup
+    ReThread Claude AI Integration Setup
     ====================================
     
-    To enable AI-powered explanations with Google Gemini:
+    To enable AI-powered explanations with Anthropic Claude:
     
-    1. Get a free Gemini API key:
-       - Visit: https://aistudio.google.com/app/apikey
-       - Click "Get API Key"
-       - Create a new API key
+    1. Get an Anthropic API key:
+       - Visit: https://console.anthropic.com/
+       - Sign up or log in to your account
+       - Navigate to API keys and create a new key
     
     2. Add to your .env file:
-       GEMINI_API_KEY=your-actual-key-here
+       ANTHROPIC_API_KEY=your-actual-key-here
     
-    3. Install the Google Generative AI library:
-       pip install google-generativeai
+    3. Install the Anthropic Python library:
+       pip install anthropic
     
     4. Test by running the application and analyzing a material
     
-    Google Gemini has generous free tier limits perfect for hackathons!
+    Anthropic Claude has a generous free tier perfect for hackathons!
     """
     
     print(instructions)
@@ -352,7 +400,7 @@ if __name__ == '__main__':
     for material in test_materials:
         if material in all_materials:
             material_data = all_materials[material]
-            explanation = generate_explanation(material, material_data)
+            explanation = generate_fabric_explanation(material, material_data)
             print(f"\n{material.upper()}:")
             print(explanation)
             print("-" * 50)
