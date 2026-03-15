@@ -17,6 +17,7 @@ from ai_helper import generate_explanation
 load_dotenv()
 
 # Initialize Flask application
+# Wrapping Python file in Flask to create a website
 app = Flask(__name__)
 
 # Load the materials dataset from JSON file
