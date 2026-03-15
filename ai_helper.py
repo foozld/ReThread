@@ -17,6 +17,52 @@ load_dotenv()
 api_key = os.getenv('ANTHROPIC_API_KEY')
 print("API KEY LOADED:", api_key)
 
+def _format_response(text):
+    """
+    Clean up Claude's response by removing markdown formatting and improving spacing.
+    
+    Args:
+        text (str): Raw response from Claude
+        
+    Returns:
+        str: Cleaned up response with better formatting
+    """
+    import re
+    
+    # Convert markdown headers to plain text with colons and newlines
+    # **Header:** -> Header:
+    text = re.sub(r'\*\*(.+?):\*\*', r'\n\1:', text)
+    # **Header** -> Header:
+    text = re.sub(r'\*\*(.+?)\*\*', r'\n\1:', text)
+    
+    # Convert markdown headings ## Header to Header:
+    text = re.sub(r'^#+\s+(.+?)$', r'\n\1:', text, flags=re.MULTILINE)
+    
+    # Remove markdown italics (*text* or _text_)
+    text = re.sub(r'\*(.+?)\*', r'\1', text)
+    text = re.sub(r'_(.+?)_', r'\1', text)
+    
+    # Remove markdown code blocks (```code```)
+    text = re.sub(r'```(.+?)```', r'\1', text, flags=re.DOTALL)
+    
+    # Remove inline code formatting (`code`)
+    text = re.sub(r'`(.+?)`', r'\1', text)
+    
+    # Clean up multiple spaces
+    text = re.sub(r'  +', ' ', text)
+    
+    # Clean up multiple newlines (keep max 2)
+    text = re.sub(r'\n\n+', '\n\n', text)
+    
+    # Add line breaks before numbered lists for readability
+    text = re.sub(r'(\d+\.)\s+', r'\n\1 ', text)
+    
+    # Strip leading/trailing whitespace
+    text = text.strip()
+    
+    return text
+
+
 def generate_fabric_explanation(material, material_data):
     """
     Generate a natural language explanation of a single material's environmental impact using Claude.
@@ -69,7 +115,7 @@ Provide a concise 2-3 sentence explanation of this material's sustainability bas
             ]
         )
         
-        return message.content[0].text
+        return _format_response(message.content[0].text)
         
     except Exception as e:
         # Log the error
@@ -164,7 +210,7 @@ Keep your response concise and actionable."""
             ]
         )
         
-        explanation_text = message.content[0].text
+        explanation_text = _format_response(message.content[0].text)
         
         return {
             'sustainability_rating': rating,
