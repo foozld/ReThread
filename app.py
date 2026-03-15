@@ -304,8 +304,10 @@ def server_error(error):
 if __name__ == '__main__':
     # Run the Flask development server
     # Debug mode is OFF for production
+    # Use PORT environment variable (Render assigns this dynamically)
+    port = int(os.getenv('PORT', 5000))
     app.run(
         debug=False,
         host='0.0.0.0',
-        port=5000
+        port=port
     )

@@ -15,7 +15,6 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 api_key = os.getenv('ANTHROPIC_API_KEY')
-print("API KEY LOADED:", api_key)
 
 
 def calculate_composition_score(composition, materials_data):

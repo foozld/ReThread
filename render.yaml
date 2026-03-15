@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: rethread
+    runtime: python310
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn -c gunicorn_config.py app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: FLASK_ENV
+        value: production
+      - key: FLASK_DEBUG
+        value: "False"
+    # Add ANTHROPIC_API_KEY as an environment variable in Render dashboard
+    # Instructions:
+    # 1. Go to your Render service dashboard
+    # 2. Click "Settings" → "Environment"
+    # 3. Add new environment variable:
+    #    Key: ANTHROPIC_API_KEY
+    #    Value: sk-ant-api03-YOUR_ACTUAL_KEY
