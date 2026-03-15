@@ -166,6 +166,60 @@ a:hover {
     display: flex;
     flex-direction: column;
 }
+/* ============================================================================
+   RATING EXPLANATION SECTION
+   ============================================================================ */
+
+.rating-explanation-section {
+    /* Container for rating explanation */
+    margin-bottom: var(--spacing-xl);
+}
+
+.rating-explanation-box {
+    /* Box explaining how ratings are calculated */
+    background: linear-gradient(135deg, var(--white) 0%, rgba(74, 157, 111, 0.03) 100%);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius);
+    box-shadow: 0 0 40px rgba(45, 106, 70, 0.4), 0 0 20px rgba(74, 157, 111, 0.3);
+    border: 2px solid rgba(74, 157, 111, 0.2);
+}
+
+.rating-explanation-box h2 {
+    /* Heading for rating explanation */
+    color: var(--primary-green);
+    font-size: var(--font-size-xl);
+    margin-bottom: var(--spacing-md);
+    font-weight: bold;
+}
+
+.rating-explanation-box p {
+    /* Paragraph text in rating explanation */
+    color: var(--dark-text);
+    margin-bottom: var(--spacing-md);
+    line-height: 1.7;
+}
+
+.rating-explanation-box ul {
+    /* Unordered list in rating explanation */
+    margin-left: var(--spacing-lg);
+    margin-bottom: var(--spacing-md);
+    list-style-type: disc;
+}
+
+.rating-explanation-box li {
+    /* List items in rating explanation */
+    color: var(--dark-text);
+    margin-bottom: var(--spacing-sm);
+    line-height: 1.6;
+}
+
+.rating-explanation-box strong {
+    /* Bold text in rating explanation */
+    color: var(--primary-green);
+    font-weight: 600;
+}
+
+
 
 /* ============================================================================
    HEADER SECTION
