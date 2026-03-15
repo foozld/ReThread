@@ -127,6 +127,16 @@ html, body {
     color: var(--dark-text);
     background-color: var(--light-bg);
     line-height: 1.6;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    --light-bg: #2a2a2a;           /* Dark gray background */
+    --dark-text: #e0e0e0;          /* Light text */
+    --white: #1e1e1e;              /* Dark cards */
+    --light-gray: #444444;          /* Darker gray for borders */
+    --medium-gray: #888888;         /* Lighter gray for secondary text */
 }
 
 /* Remove default link styling */
@@ -167,9 +177,39 @@ a:hover {
     margin-bottom: var(--spacing-xl);
     padding: var(--spacing-lg);
     background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
-    color: var(--white);
+    color: #ffffff;
     border-radius: var(--border-radius);
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+    position: absolute;
+    top: var(--spacing-md);
+    right: var(--spacing-md);
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid rgba(255, 255, 255, 0.4);
+    color: #ffffff;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    font-size: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.6);
+    transform: scale(1.1);
+}
+
+.dark-mode-toggle:active {
+    transform: scale(0.95);
 }
 
 .app-title {
