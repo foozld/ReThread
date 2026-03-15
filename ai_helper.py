@@ -143,7 +143,18 @@ def generate_fabric_explanation(material, material_data):
             return get_fallback_explanation(material)
         
         # Initialize Anthropic client
-        client = anthropic.Anthropic(api_key=api_key)
+        try:
+            client = anthropic.Anthropic(api_key=api_key)
+        except TypeError as e:
+            if 'proxies' in str(e):
+                # Workaround for environment proxy issues
+                import httpx
+                client = anthropic.Anthropic(
+                    api_key=api_key,
+                    http_client=httpx.Client()
+                )
+            else:
+                raise
         
         # Build the prompt with material data
         alternatives_str = ", ".join(material_data.get('alternatives', [])) if material_data.get('alternatives') else "None listed"
@@ -221,7 +232,18 @@ def generate_composition_explanation(composition, weighted_score, rating, materi
             return get_fallback_composition_analysis(composition)
         
         # Initialize Anthropic client
-        client = anthropic.Anthropic(api_key=api_key)
+        try:
+            client = anthropic.Anthropic(api_key=api_key)
+        except TypeError as e:
+            if 'proxies' in str(e):
+                # Workaround for environment proxy issues
+                import httpx
+                client = anthropic.Anthropic(
+                    api_key=api_key,
+                    http_client=httpx.Client()
+                )
+            else:
+                raise
         
         # Build composition string for the prompt
         composition_str = ", ".join([f"{item['percent']}% {item['material']}" for item in composition_list])
