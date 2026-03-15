@@ -17,6 +17,61 @@ load_dotenv()
 api_key = os.getenv('ANTHROPIC_API_KEY')
 print("API KEY LOADED:", api_key)
 
+
+def calculate_composition_score(composition, materials_data):
+    """
+    Calculate weighted sustainability score for a fabric composition.
+    
+    Args:
+        composition: List of dicts with 'material' and 'percent' keys
+        materials_data: Database of materials with metrics
+        
+    Returns:
+        tuple: (weighted_score: 0-100, rating: str)
+    """
+    if not composition or not isinstance(composition, list):
+        return 0, "Poor"
+    
+    total_score = 0
+    total_percent = 0
+    
+    for item in composition:
+        material_name = item.get('material', '')
+        percent = item.get('percent', 0)
+        total_percent += percent
+        
+        # Find material in database
+        material_found = None
+        for db_mat in materials_data.keys():
+            if db_mat.lower() == material_name.lower():
+                material_found = db_mat
+                break
+        
+        if material_found and material_found in materials_data:
+            # Use sustainability_score from the metrics (0-5 scale)
+            score = materials_data[material_found].get('sustainability_score', 2.5)
+            # Convert to 0-100 scale and weight by percentage
+            weighted_contribution = (score / 5.0) * 100 * (percent / 100.0)
+            total_score += weighted_contribution
+    
+    # Normalize to 0-100
+    final_score = total_score if total_percent > 0 else 0
+    
+    # Determine rating based on score
+    if final_score >= 75:
+        rating = "Excellent"
+    elif final_score >= 60:
+        rating = "Good"
+    elif final_score >= 40:
+        rating = "Moderate"
+    elif final_score >= 20:
+        rating = "Poor"
+    else:
+        rating = "Very Poor"
+    
+    return final_score, rating
+
+
 def _format_response(text):
     """
     Clean up Claude's response by removing markdown formatting and improving spacing.
@@ -172,23 +227,25 @@ def generate_composition_explanation(composition, weighted_score, rating, materi
         # Build composition string for the prompt
         composition_str = ", ".join([f"{item['percent']}% {item['material']}" for item in composition_list])
         
-        # Build material impact summary
+        # Build material impact summary with metrics
         material_impacts = []
         for item in composition_list:
             material_name = item['material']
             percent = item['percent']
             if material_name in materials_data:
-                impact = materials_data[material_name].get('impact', 'Unknown impact')
-                material_impacts.append(f"- {percent}% {material_name}: {impact}")
+                mat_data = materials_data[material_name]
+                score = mat_data.get('sustainability_score', 2.5)
+                issues = ", ".join(mat_data.get('main_issues', [])[:2])
+                material_impacts.append(f"- {percent}% {material_name} (Score: {score}/5): {issues}")
         
         material_impacts_str = "\n".join(material_impacts) if material_impacts else "Material details not available"
         
-        # Build the prompt
+        # Build the prompt with detailed metrics
         prompt = f"""Analyze this fabric composition for sustainability:
 
 Composition: {composition_str}
 
-Overall Sustainability Score: {weighted_score:.1f}/100
+Overall Sustainability Score: {weighted_score:.0f}/100
 Overall Rating: {rating}
 
 Material Breakdown:
@@ -196,7 +253,7 @@ Material Breakdown:
 
 Provide:
 1. A brief assessment (1-2 sentences) of this garment's overall sustainability
-2. Which material(s) contribute most to environmental impact
+2. Which material(s) contribute most to environmental impact and why
 3. One specific recommendation to improve sustainability
 Keep your response concise and actionable."""
 

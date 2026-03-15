@@ -1,198 +1,457 @@
 {
   "Polyester": {
-    "sustainability": "Low",
-    "impact": "Microplastic pollution and fossil fuel production",
-    "water_usage": "Low",
-    "biodegradable": "No (200+ years)",
-    "alternatives": ["Tencel", "Hemp", "Organic Cotton", "Recycled Polyester"]
+    "name": "Polyester",
+    "sustainability_score": 1.5,
+    "metrics": {
+      "carbon_emissions": 1,
+      "water_usage": 4,
+      "microplastic_risk": 5,
+      "biodegradability": 0
+    },
+    "description": "Synthetic fiber made from petroleum-based plastics.",
+    "main_issues": [
+      "Microplastic pollution when washed",
+      "Fossil fuel production",
+      "Non-biodegradable (200+ years)"
+    ],
+    "alternatives": ["Hemp", "Tencel", "Organic Cotton", "Recycled Polyester"]
   },
   "Recycled Polyester": {
-    "sustainability": "Medium-High",
-    "impact": "Reuses existing plastic, reducing demand for new petroleum production",
-    "water_usage": "Very Low",
-    "biodegradable": "No",
+    "name": "Recycled Polyester",
+    "sustainability_score": 3.5,
+    "metrics": {
+      "carbon_emissions": 2,
+      "water_usage": 5,
+      "microplastic_risk": 4,
+      "biodegradability": 0
+    },
+    "description": "Polyester made from recycled plastic waste, reducing new petroleum demand.",
+    "main_issues": [
+      "Still sheds microplastics",
+      "Non-biodegradable"
+    ],
     "alternatives": ["Hemp", "Organic Cotton", "Tencel", "Linen"]
   },
   "Cotton": {
-    "sustainability": "Medium",
-    "impact": "High pesticide use and heavy water consumption",
-    "water_usage": "Very High (2,700 liters per shirt)",
-    "biodegradable": "Yes (about 5 months)",
+    "name": "Cotton",
+    "sustainability_score": 2.5,
+    "metrics": {
+      "carbon_emissions": 2,
+      "water_usage": 1,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Natural fiber with high environmental impact from conventional farming.",
+    "main_issues": [
+      "Heavy pesticide use",
+      "Extremely high water consumption (2,700L per shirt)",
+      "Soil degradation"
+    ],
     "alternatives": ["Organic Cotton", "Hemp", "Bamboo", "Linen"]
   },
   "Organic Cotton": {
-    "sustainability": "High",
-    "impact": "Minimal pesticide use and better soil management",
-    "water_usage": "High",
-    "biodegradable": "Yes (about 5 months)",
+    "name": "Organic Cotton",
+    "sustainability_score": 4.0,
+    "metrics": {
+      "carbon_emissions": 3,
+      "water_usage": 2,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Cotton grown without synthetic pesticides using sustainable farming practices.",
+    "main_issues": [
+      "Still requires significant water",
+      "Large land use requirements"
+    ],
     "alternatives": ["Hemp", "Tencel", "Linen"]
   },
   "Hemp": {
-    "sustainability": "Very High",
-    "impact": "Highly renewable plant that requires minimal pesticides and improves soil health",
-    "water_usage": "Low",
-    "biodegradable": "Yes (about 2 weeks)",
+    "name": "Hemp",
+    "sustainability_score": 5.0,
+    "metrics": {
+      "carbon_emissions": 5,
+      "water_usage": 5,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Highly renewable plant fiber requiring minimal inputs and improving soil health.",
+    "main_issues": [
+      "None significant"
+    ],
     "alternatives": ["Organic Cotton", "Linen", "Bamboo"]
   },
   "Linen": {
-    "sustainability": "Very High",
-    "impact": "Made from flax plant requiring minimal pesticides and processing",
-    "water_usage": "Low",
-    "biodegradable": "Yes (about 2 weeks)",
+    "name": "Linen",
+    "sustainability_score": 4.8,
+    "metrics": {
+      "carbon_emissions": 5,
+      "water_usage": 5,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Natural fiber from flax plants requiring minimal pesticides and processing.",
+    "main_issues": [
+      "Minimal processing required"
+    ],
     "alternatives": ["Hemp", "Organic Cotton", "Bamboo"]
   },
   "Tencel": {
-    "sustainability": "High",
-    "impact": "Closed-loop production using sustainably sourced wood pulp",
-    "water_usage": "Low",
-    "biodegradable": "Yes (1-5 months)",
+    "name": "Tencel (Lyocell)",
+    "sustainability_score": 4.2,
+    "metrics": {
+      "carbon_emissions": 4,
+      "water_usage": 4,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Semi-synthetic fiber from sustainably managed wood pulp with closed-loop production.",
+    "main_issues": [
+      "Chemical processing required",
+      "Requires wood pulp sourcing"
+    ],
     "alternatives": ["Organic Cotton", "Hemp", "Bamboo"]
   },
   "Bamboo": {
-    "sustainability": "High",
-    "impact": "Fast-growing renewable plant but processing can require chemicals",
-    "water_usage": "Low",
-    "biodegradable": "Yes",
+    "name": "Bamboo",
+    "sustainability_score": 3.5,
+    "metrics": {
+      "carbon_emissions": 4,
+      "water_usage": 4,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Fast-growing renewable plant but chemical processing can impact environment.",
+    "main_issues": [
+      "Chemical-intensive processing",
+      "Monoculture farming concerns"
+    ],
     "alternatives": ["Hemp", "Organic Cotton", "Tencel"]
   },
   "Nylon": {
-    "sustainability": "Low",
-    "impact": "Fossil fuel based fiber that sheds microplastics",
-    "water_usage": "Low",
-    "biodegradable": "No (30-40 years)",
+    "name": "Nylon",
+    "sustainability_score": 1.5,
+    "metrics": {
+      "carbon_emissions": 1,
+      "water_usage": 4,
+      "microplastic_risk": 5,
+      "biodegradability": 1
+    },
+    "description": "Fossil fuel-based synthetic fiber that sheds harmful microplastics.",
+    "main_issues": [
+      "Petroleum-derived",
+      "Significant microplastic shedding",
+      "Decades to biodegrade (30-40 years)"
+    ],
     "alternatives": ["Hemp", "Organic Cotton", "Recycled Nylon"]
   },
   "Recycled Nylon": {
-    "sustainability": "Medium",
-    "impact": "Reduces new petroleum production by recycling plastic waste",
-    "water_usage": "Low",
-    "biodegradable": "No",
+    "name": "Recycled Nylon",
+    "sustainability_score": 2.8,
+    "metrics": {
+      "carbon_emissions": 2,
+      "water_usage": 5,
+      "microplastic_risk": 4,
+      "biodegradability": 1
+    },
+    "description": "Nylon made from recycled plastic, reducing new petroleum production.",
+    "main_issues": [
+      "Still sheds microplastics",
+      "Non-biodegradable"
+    ],
     "alternatives": ["Hemp", "Organic Cotton", "Tencel"]
   },
   "Wool": {
-    "sustainability": "Medium-High",
-    "impact": "Natural fiber but livestock contributes methane emissions",
-    "water_usage": "Medium",
-    "biodegradable": "Yes",
+    "name": "Wool",
+    "sustainability_score": 3.2,
+    "metrics": {
+      "carbon_emissions": 2,
+      "water_usage": 3,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Natural animal fiber with biodegradability, but livestock has environmental impacts.",
+    "main_issues": [
+      "Methane emissions from sheep farming",
+      "Land use and potential overgrazing"
+    ],
     "alternatives": ["Organic Cotton", "Hemp", "Alpaca"]
   },
   "Merino Wool": {
-    "sustainability": "Medium-High",
-    "impact": "Natural biodegradable fiber but livestock farming impacts environment",
-    "water_usage": "Medium",
-    "biodegradable": "Yes",
+    "name": "Merino Wool",
+    "sustainability_score": 3.5,
+    "metrics": {
+      "carbon_emissions": 2,
+      "water_usage": 3,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Higher-quality wool from Merino sheep with better environmental management practices.",
+    "main_issues": [
+      "Livestock farming impacts",
+      "Land use requirements"
+    ],
     "alternatives": ["Alpaca", "Organic Cotton", "Hemp"]
   },
   "Silk": {
-    "sustainability": "Medium",
-    "impact": "Natural fiber but sericulture is resource intensive",
-    "water_usage": "Medium",
-    "biodegradable": "Yes",
+    "name": "Silk",
+    "sustainability_score": 2.5,
+    "metrics": {
+      "carbon_emissions": 3,
+      "water_usage": 3,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Natural protein fiber with biodegradability, but production is resource-intensive.",
+    "main_issues": [
+      "Resource-intensive sericulture",
+      "Animal welfare concerns"
+    ],
     "alternatives": ["Peace Silk", "Tencel", "Hemp"]
   },
   "Peace Silk": {
-    "sustainability": "Medium-High",
-    "impact": "Silk produced without killing silkworms",
-    "water_usage": "Medium",
-    "biodegradable": "Yes",
+    "name": "Peace Silk",
+    "sustainability_score": 3.8,
+    "metrics": {
+      "carbon_emissions": 3,
+      "water_usage": 3,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Silk produced without killing silkworms, improving ethical and environmental outcomes.",
+    "main_issues": [
+      "Resource-intensive production",
+      "Limited availability"
+    ],
     "alternatives": ["Tencel", "Hemp", "Organic Cotton"]
   },
   "Acrylic": {
-    "sustainability": "Low",
-    "impact": "Petroleum-based synthetic fiber that sheds microplastics",
-    "water_usage": "Low",
-    "biodegradable": "No (200+ years)",
+    "name": "Acrylic",
+    "sustainability_score": 1.2,
+    "metrics": {
+      "carbon_emissions": 1,
+      "water_usage": 4,
+      "microplastic_risk": 5,
+      "biodegradability": 0
+    },
+    "description": "Petroleum-based synthetic fiber with significant microplastic pollution.",
+    "main_issues": [
+      "Heavy microplastic shedding",
+      "Fossil fuel production",
+      "Non-biodegradable (200+ years)"
+    ],
     "alternatives": ["Merino Wool", "Organic Cotton", "Hemp"]
   },
   "Rayon / Viscose": {
-    "sustainability": "Medium",
-    "impact": "Semi-synthetic fiber from wood pulp requiring chemical processing",
-    "water_usage": "Medium",
-    "biodegradable": "Yes",
+    "name": "Rayon / Viscose",
+    "sustainability_score": 2.8,
+    "metrics": {
+      "carbon_emissions": 3,
+      "water_usage": 3,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Semi-synthetic fiber from wood pulp with chemical processing.",
+    "main_issues": [
+      "Chemical-intensive processing",
+      "Water pollution concerns",
+      "Requires wood harvesting"
+    ],
     "alternatives": ["Tencel", "Modal", "Hemp", "Organic Cotton"]
   },
   "Modal": {
-    "sustainability": "Medium-High",
-    "impact": "Beech tree fiber with more efficient processing than rayon",
-    "water_usage": "Lower than Cotton",
-    "biodegradable": "Yes",
+    "name": "Modal",
+    "sustainability_score": 3.8,
+    "metrics": {
+      "carbon_emissions": 4,
+      "water_usage": 4,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Beech-based fiber with more efficient processing than rayon.",
+    "main_issues": [
+      "Chemical processing",
+      "Wood pulp sourcing"
+    ],
     "alternatives": ["Tencel", "Hemp", "Organic Cotton"]
   },
   "Spandex (Elastane)": {
-    "sustainability": "Low",
-    "impact": "Petroleum-based stretch fiber with high microplastic pollution",
-    "water_usage": "Low",
-    "biodegradable": "No",
+    "name": "Spandex (Elastane)",
+    "sustainability_score": 1.0,
+    "metrics": {
+      "carbon_emissions": 1,
+      "water_usage": 4,
+      "microplastic_risk": 5,
+      "biodegradability": 0
+    },
+    "description": "Petroleum-based stretch fiber with high microplastic pollution.",
+    "main_issues": [
+      "Extreme microplastic pollution",
+      "Fossil fuel production",
+      "Non-biodegradable"
+    ],
     "alternatives": ["Organic Cotton blends", "Hemp blends"]
   },
   "Cashmere": {
-    "sustainability": "Medium",
-    "impact": "Goat grazing can lead to land degradation",
-    "water_usage": "Medium",
-    "biodegradable": "Yes",
+    "name": "Cashmere",
+    "sustainability_score": 2.5,
+    "metrics": {
+      "carbon_emissions": 2,
+      "water_usage": 3,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Luxury natural fiber with potential land degradation from goat farming.",
+    "main_issues": [
+      "Land degradation from overgrazing",
+      "Methane emissions",
+      "Limited water impacts"
+    ],
     "alternatives": ["Recycled Cashmere", "Organic Wool", "Alpaca"]
   },
   "Alpaca": {
-    "sustainability": "Medium-High",
-    "impact": "Low environmental footprint fiber but transportation emissions matter",
-    "water_usage": "Low",
-    "biodegradable": "Yes",
+    "name": "Alpaca",
+    "sustainability_score": 4.0,
+    "metrics": {
+      "carbon_emissions": 4,
+      "water_usage": 4,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Animal fiber with low environmental footprint and gentle grazing practices.",
+    "main_issues": [
+      "Transportation emissions",
+      "Limited supply"
+    ],
     "alternatives": ["Organic Wool", "Hemp"]
   },
   "Angora": {
-    "sustainability": "Medium",
-    "impact": "Rabbit fiber with potential animal welfare concerns",
-    "water_usage": "Low",
-    "biodegradable": "Yes",
+    "name": "Angora",
+    "sustainability_score": 2.8,
+    "metrics": {
+      "carbon_emissions": 3,
+      "water_usage": 3,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Rabbit fiber with potential animal welfare concerns.",
+    "main_issues": [
+      "Animal welfare concerns",
+      "Limited sustainable sourcing"
+    ],
     "alternatives": ["Organic Wool", "Recycled Wool"]
   },
   "Acetate": {
-    "sustainability": "Medium-Low",
-    "impact": "Wood pulp fiber chemically processed during production",
-    "water_usage": "Medium",
-    "biodegradable": "Partially",
+    "name": "Acetate",
+    "sustainability_score": 2.2,
+    "metrics": {
+      "carbon_emissions": 3,
+      "water_usage": 3,
+      "microplastic_risk": 2,
+      "biodegradability": 3
+    },
+    "description": "Semi-synthetic wood pulp fiber with chemical processing.",
+    "main_issues": [
+      "Chemical processing",
+      "Partial biodegradability only",
+      "Water pollution potential"
+    ],
     "alternatives": ["Tencel", "Modal"]
   },
   "Cupro": {
-    "sustainability": "Medium-High",
-    "impact": "Regenerated fiber made from cotton waste but requires chemical processing",
-    "water_usage": "Medium",
-    "biodegradable": "Yes",
+    "name": "Cupro",
+    "sustainability_score": 3.5,
+    "metrics": {
+      "carbon_emissions": 3,
+      "water_usage": 3,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Regenerated fiber made from cotton waste with chemical processing.",
+    "main_issues": [
+      "Chemical processing required",
+      "Requires established cotton industry"
+    ],
     "alternatives": ["Tencel", "Modal"]
   },
   "Ramie": {
-    "sustainability": "High",
-    "impact": "Plant fiber with low pesticide use but energy intensive processing",
-    "water_usage": "Low",
-    "biodegradable": "Yes",
+    "name": "Ramie",
+    "sustainability_score": 4.2,
+    "metrics": {
+      "carbon_emissions": 4,
+      "water_usage": 5,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Plant fiber with low pesticide use but energy-intensive processing.",
+    "main_issues": [
+      "Energy-intensive processing",
+      "Limited mainstream use"
+    ],
     "alternatives": ["Hemp", "Linen"]
   },
   "Jute": {
-    "sustainability": "High",
-    "impact": "Natural plant fiber requiring minimal fertilizers",
-    "water_usage": "Low",
-    "biodegradable": "Yes",
+    "name": "Jute",
+    "sustainability_score": 4.5,
+    "metrics": {
+      "carbon_emissions": 5,
+      "water_usage": 5,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Natural plant fiber requiring minimal fertilizers and chemicals.",
+    "main_issues": [
+      "Limited clothing applications",
+      "Rough texture"
+    ],
     "alternatives": ["Hemp", "Linen"]
   },
   "Kapok": {
-    "sustainability": "High",
-    "impact": "Naturally growing tree fiber requiring minimal farming inputs",
-    "water_usage": "Very Low",
-    "biodegradable": "Yes",
+    "name": "Kapok",
+    "sustainability_score": 4.6,
+    "metrics": {
+      "carbon_emissions": 5,
+      "water_usage": 5,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Natural tree fiber requiring minimal farming inputs.",
+    "main_issues": [
+      "Limited supply",
+      "Specialty fiber"
+    ],
     "alternatives": ["Organic Cotton", "Hemp"]
   },
   "Banana Fiber": {
-    "sustainability": "High",
-    "impact": "Uses agricultural waste from banana plants",
-    "water_usage": "Low",
-    "biodegradable": "Yes",
+    "name": "Banana Fiber",
+    "sustainability_score": 4.7,
+    "metrics": {
+      "carbon_emissions": 5,
+      "water_usage": 5,
+      "microplastic_risk": 0,
+      "biodegradability": 5
+    },
+    "description": "Sustainable fiber made from agricultural waste of banana plants.",
+    "main_issues": [
+      "Limited availability",
+      "Emerging market"
+    ],
     "alternatives": ["Hemp", "Linen"]
   },
   "Pineapple Fiber (Piñatex)": {
-    "sustainability": "High",
-    "impact": "Made from pineapple leaf waste from agriculture",
-    "water_usage": "Low",
-    "biodegradable": "Partially",
+    "name": "Pineapple Fiber (Piñatex)",
+    "sustainability_score": 4.5,
+    "metrics": {
+      "carbon_emissions": 5,
+      "water_usage": 5,
+      "microplastic_risk": 0,
+      "biodegradability": 3
+    },
+    "description": "Innovative fiber made from pineapple leaf waste, eliminating waste.",
+    "main_issues": [
+      "Limited availability",
+      "Niche product",
+      "Coating materials may affect biodegradability"
+    ],
     "alternatives": ["Hemp", "Organic Cotton"]
   }
 }

@@ -11,7 +11,7 @@ from flask import Flask, render_template, request, jsonify
 import json
 import os
 from dotenv import load_dotenv
-from ai_helper import generate_fabric_explanation
+from ai_helper import generate_fabric_explanation, generate_composition_explanation, calculate_composition_score, _parse_composition_string
 
 # Load environment variables from .env file
 load_dotenv()
@@ -111,15 +111,59 @@ def analyze():
         # Get the material data
         material_data = MATERIALS[material_found]
         
+        # Extract metrics from the new data structure
+        metrics = material_data.get('metrics', {})
+        score = material_data.get('sustainability_score', 0)
+        
+        # Convert sustainability score (0-5) to a rating
+        if score >= 4.5:
+            sustainability_rating = "Very High"
+        elif score >= 3.5:
+            sustainability_rating = "High"
+        elif score >= 2.5:
+            sustainability_rating = "Medium"
+        elif score >= 1.5:
+            sustainability_rating = "Low"
+        else:
+            sustainability_rating = "Very Low"
+        
+        # Build biodegradability status from metrics
+        biodegradability = metrics.get('biodegradability', 0)
+        if biodegradability == 5:
+            biodegradable_text = "Yes (rapidly biodegradable)"
+        elif biodegradability >= 3:
+            biodegradable_text = "Yes (biodegradable)"
+        elif biodegradability >= 1:
+            biodegradable_text = "Partially biodegradable"
+        else:
+            biodegradable_text = "No (non-biodegradable)"
+        
+        # Build water usage status from metrics
+        water_usage = metrics.get('water_usage', 0)
+        if water_usage >= 4:
+            water_usage_text = "High"
+        elif water_usage >= 2:
+            water_usage_text = "Moderate"
+        else:
+            water_usage_text = "Low"
+        
         # Build the response with the material information
         response = {
             'success': True,
             'material': material_found,
-            'sustainability': material_data.get('sustainability', 'Unknown'),
-            'impact': material_data.get('impact', 'No information available'),
-            'water_usage': material_data.get('water_usage', 'Unknown'),
-            'biodegradable': material_data.get('biodegradable', 'Unknown'),
-            'alternatives': material_data.get('alternatives', [])
+            'sustainability': sustainability_rating,
+            'impact': material_data.get('description', 'No information available'),
+            'water_usage': water_usage_text,
+            'main_issues': material_data.get('main_issues', []),
+            'metrics': {
+                'carbon_emissions': metrics.get('carbon_emissions', 0),
+                'water_usage': metrics.get('water_usage', 0),
+                'microplastic_risk': metrics.get('microplastic_risk', 0),
+                'biodegradability': metrics.get('biodegradability', 0)
+            },
+            'biodegradable': biodegradable_text,
+            'alternatives': material_data.get('alternatives', []),
+            'sustainability_score': score
         }
         
         # Try to generate an AI explanation if API key is available
@@ -183,8 +227,19 @@ def analyze_composition():
         
         # Try to analyze the composition with AI
         try:
-            from ai_helper import generate_composition_explanation
-            analysis_result = generate_composition_explanation(composition, 0, 'Moderate', MATERIALS)
+            from ai_helper import generate_composition_explanation, _parse_composition_string, calculate_composition_score
+            
+            # Parse the composition string into a structured format
+            composition_list = _parse_composition_string(composition, MATERIALS)
+            
+            # Calculate the weighted sustainability score
+            if composition_list:
+                weighted_score, rating = calculate_composition_score(composition_list, MATERIALS)
+            else:
+                weighted_score, rating = 0, "Poor"
+            
+            # Generate AI analysis with the calculated scores
+            analysis_result = generate_composition_explanation(composition, weighted_score, rating, MATERIALS)
             
             return jsonify({
                 'success': True,
