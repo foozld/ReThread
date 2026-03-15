@@ -15,8 +15,8 @@ anthropic==0.31.0
 # colorama==0.4.6
 
 # Optional: For production deployment
-# gunicorn==21.2.0
-# python-decouple==3.8
+gunicorn==21.2.0
+python-decouple==3.8
 
 # Development dependencies (uncomment for development)
 # pip-tools==7.3.0          # For managing requirements
