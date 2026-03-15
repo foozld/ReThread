@@ -168,7 +168,7 @@ Material Sustainability Data:
 - Biodegradable: {material_data.get('biodegradable', 'Unknown')}
 - Sustainable Alternatives: {alternatives_str}
 
-Provide a concise 2-3 sentence explanation of this material's sustainability based on the data above. Be practical and actionable in your recommendation."""
+Provide a concise 2-3 sentence explanation of this material's sustainability. Be practical and actionable in your recommendation."""
 
         message = client.messages.create(
             model="claude-opus-4-1-20250805",
